@@ -1,0 +1,37 @@
+version: '3'
+services:
+  postgres:
+    image: library/postgres:latest
+    ports:
+    - '5432:5432'
+    environment:
+      - POSTGRES_PASSWORD=postgres
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    volumes:
+      - /app/node_modules
+      - ./client:/app
+    ports:
+      - '3000:3000'
+    restart: on-failure
+    container_name: client
+    stdin_open: true
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+    - '3001:3001'
+    restart: on-failure
+    container_name: server
+    volumes:
+    - /app/node_modules
+    - ./server:/app
+    environment:
+    - PGUSER=postgres
+    - PGHOST=postgres
+    - PGDATABASE=postgres
+    - PGPASSWORD=postgres
+    - PGPORT=5432

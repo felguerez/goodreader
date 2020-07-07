@@ -2,7 +2,7 @@ FROM node:14-alpine AS alpine
 
 WORKDIR /app
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY package*.json .
+COPY package*.json ./
 
 # Install only the packages defined in package-lock.json (faster than normal npm install)
 RUN npm install
