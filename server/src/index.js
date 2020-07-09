@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 const { Pool } = require("pg");
 
 const pgClient = new Pool({
-  useR: config.pgUser,
+  user: config.pgUser,
   host: config.pgHost,
   database: config.pgDatabase,
   password: config.pgPassword,
@@ -42,3 +42,5 @@ app.get("/test", (req, res) => {
 app.get("/v1/items", async (req, res) => {
   const items = await pgClient.query("SELECT * FROM items");
 });
+
+app.get("/signup", (req, res) => {});
