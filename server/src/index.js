@@ -5,12 +5,19 @@ const http = require("http");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { v4: uuid } = require("uuid");
+const passport = require("passport");
+const session = require("express-session");
 
 const config = require("./config");
+const PORT = process.env.PORT || 3001;
+const HOST = "0.0.0.0";
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use(session({ secret: "burrito", resave: true, saveUninitialized: true }));
+app.use(passport.initialize({}));
+app.use(passport.session({}));
 
 const { Pool } = require("pg");
 
@@ -35,12 +42,20 @@ pgClient
   )
   .catch((err) => console.log(err));
 
+app.get("/", function (req, res) {
+  res.send("こんにちは!");
+});
+
 app.get("/test", (req, res) => {
   res.send("working");
 });
 
 app.get("/v1/items", async (req, res) => {
   const items = await pgClient.query("SELECT * FROM items");
+  res.send(JSON.stringify(items.rows));
 });
 
 app.get("/signup", (req, res) => {});
+
+app.listen(PORT, HOST);
+console.log(`Running on http://${HOST}:${PORT}`);
