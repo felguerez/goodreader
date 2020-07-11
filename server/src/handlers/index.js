@@ -1,3 +1,5 @@
+const { pgClient } = require("../");
+
 export function index(req, res) {
   res.send("こんにちは!");
 }

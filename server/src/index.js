@@ -22,7 +22,7 @@ app.use(passport.session({}));
 
 const { Pool } = require("pg");
 
-const pgClient = new Pool({
+export const pgClient = new Pool({
   user: config.pgUser,
   host: config.pgHost,
   database: config.pgDatabase,
