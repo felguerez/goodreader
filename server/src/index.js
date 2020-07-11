@@ -7,6 +7,7 @@ const cors = require("cors");
 const { v4: uuid } = require("uuid");
 const passport = require("passport");
 const session = require("express-session");
+const { index, test } = require("./handlers");
 
 const config = require("./config");
 const PORT = process.env.PORT || 3001;
@@ -28,7 +29,7 @@ const pgClient = new Pool({
   password: config.pgPassword,
   port: config.pgPort,
 });
-pgClient.on("error", () => console.log("Lost Postgress connection"));
+pgClient.on("error", () => console.log("Lost Postgres connection"));
 
 pgClient
   .query(
@@ -42,18 +43,11 @@ pgClient
   )
   .catch((err) => console.log(err));
 
-app.get("/", function (req, res) {
-  res.send("こんにちは!");
-});
+app.get("/", index);
 
-app.get("/test", (req, res) => {
-  res.send("working");
-});
+app.get("/test", test);
 
-app.get("/v1/items", async (req, res) => {
-  const items = await pgClient.query("SELECT * FROM items");
-  res.send(JSON.stringify(items.rows));
-});
+app.get("/v1/items", items);
 
 app.get("/signup", (req, res) => {});
 
