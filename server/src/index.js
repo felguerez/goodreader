@@ -1,55 +1,51 @@
 require("dotenv").config();
 
 const express = require("express");
-const http = require("http");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const { v4: uuid } = require("uuid");
-const passport = require("passport");
 const session = require("express-session");
-const { index, test } = require("./handlers");
+const passport = require("passport");
+const { logout } = require("./handlers/logout");
+const { index } = require("./handlers");
+const { createUser } = require("./handlers/createUser");
+const { login } = require("./handlers/login");
+const { loginRequired } = require("./auth/loginRequired");
+const init = require("./auth/passport");
+const { getUser } = require("./handlers/getUser");
 
-const config = require("./config");
+init();
+
 const PORT = process.env.PORT || 3001;
 const HOST = "0.0.0.0";
 
 const app = express();
+
 app.use(cors());
 app.use(bodyParser.json());
-app.use(session({ secret: "burrito", resave: true, saveUninitialized: true }));
-app.use(passport.initialize({}));
-app.use(passport.session({}));
-
-const { Pool } = require("pg");
-
-export const pgClient = new Pool({
-  user: config.pgUser,
-  host: config.pgHost,
-  database: config.pgDatabase,
-  password: config.pgPassword,
-  port: config.pgPort,
-});
-pgClient.on("error", () => console.log("Lost Postgres connection"));
-
-pgClient
-  .query(
-    `
-  CREATE TABLE IF NOT EXISTS items (
-    id uuid,
-  item_name TEXT NOT NULL,
-  complete BOOLEAN DEFAULT false,
-  PRIMARY KEY (id)
-)`
-  )
-  .catch((err) => console.log(err));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+  session({
+    secret: "burrito",
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get("/", index);
 
-app.get("/test", test);
+app.post("/v1/users/create", createUser);
 
-app.get("/v1/items", items);
+app.post("/v1/users/login", passport.authenticate("local"), login);
 
-app.get("/signup", (req, res) => {});
+app.get("/logout", logout);
+
+app.get("/v1/user", loginRequired, getUser);
 
 app.listen(PORT, HOST);
 console.log(`Running on http://${HOST}:${PORT}`);
