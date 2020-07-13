@@ -1,9 +1,7 @@
 import React, { Dispatch } from "react";
 import styled from "@emotion/styled";
-import { useHistory } from "react-router-dom";
 
 export function Login({ dispatch }: { dispatch: Dispatch<any> }) {
-  const history = useHistory();
   const loginUser = async (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
     // @ts-ignore

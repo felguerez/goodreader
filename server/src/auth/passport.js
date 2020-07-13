@@ -3,7 +3,6 @@ const { query } = require("../lib/db");
 const { createLocalStrategy } = require("./passport-local");
 
 module.exports = () => {
-  createLocalStrategy();
   passport.serializeUser((user, done) => {
     console.log("serializeUser whats my user here", user);
     done(null, user.id);
@@ -21,4 +20,5 @@ module.exports = () => {
       done(e, null);
     }
   });
+  createLocalStrategy();
 };

@@ -6,7 +6,7 @@ const { query } = require("../lib/db");
 function createLocalStrategy() {
   passport.use(
     new LocalStrategy(
-      { usernameField: "email", passwordField: "password" },
+      { usernameField: "email" },
       async (email, password, done) => {
         const [user] = await query(
           `SELECT * from "user" where "user".email='${email}';`
@@ -14,7 +14,7 @@ function createLocalStrategy() {
         if (!user) return done(null, false);
         const passwordValid = await bcrypt.compare(password, user.password);
         if (!passwordValid) return done(null, false);
-        done(null, user);
+        return done(null, user);
       }
     )
   );

@@ -51,7 +51,9 @@ export function useUser(): [State, Dispatch<Action>] {
   async function loadUser() {
     try {
       let user = {};
-      const result = await fetch(`${process.env.REACT_APP_SERVER_API}/user`);
+      const result = await fetch(`${process.env.REACT_APP_SERVER_API}/user`, {
+        credentials: "same-origin",
+      });
       if (result.ok) {
         user = await result.json();
       }

@@ -1,10 +1,12 @@
-function login(req, res, next) {
+function login(req, res) {
   const user = req.user;
-  req.login(user, (err) => {
+  console.log("user in login:", user);
+  req.logIn(user, (err) => {
+    console.log("when does logIn  get called?");
     if (err) {
-      return next(err);
+      return res.status(422).json({ error: err });
     }
-    return res.send(JSON.stringify({ user }));
+    return res.json({ user });
   });
 }
 
